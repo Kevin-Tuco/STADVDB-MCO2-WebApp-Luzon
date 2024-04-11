@@ -216,11 +216,11 @@ app.get('/checkApptid', (req, res) => {
     const region = req.query.region
     // Select connection based on add_RegionName
     let connection;
-    if (region === 'Central Luzon (III)' || region === 'National Capital Region' || region === 'National Capital Region (NCR)' || region === 'Bicol Region (V)' || region === 'MIMAROPA (IV-B)' || region === 'CALABARZON (IV-A)' || region === 'Ilocos Region (I)' || region === 'Cordillera Administrative Region (CAR)' || region === 'Cagayan Valley (II)') {
+    if (region === 'Luzon') {
         connection = centralToLuzonConnection;
     } else {
         connection = centralToVisMinConnection;
-    }    
+    }
     // Query to check if apptid exists
     const query = `SELECT COUNT(*) AS count FROM DenormalizedAppointments WHERE apptid = ?`;
     connection.query(query, [apptid], (error, results) => {
@@ -247,8 +247,10 @@ app.post('/addAppointment', async (req, res) => {
         // Select connection based on add_RegionName
         let connection;
         if (add_RegionName === 'Central Luzon (III)' || add_RegionName === 'National Capital Region' || add_RegionName === 'National Capital Region (NCR)' || add_RegionName === 'Bicol Region (V)' || add_RegionName === 'MIMAROPA (IV-B)' || add_RegionName === 'CALABARZON (IV-A)' || add_RegionName === 'Ilocos Region (I)' || add_RegionName === 'Cordillera Administrative Region (CAR)' || add_RegionName === 'Cagayan Valley (II)') {
+            //console.log("add Going to Luzon");
             connection = centralToLuzonConnection;
         } else {
+            //console.log("add Going to Vismin");
             connection = centralToVisMinConnection;
         }
 
@@ -283,17 +285,11 @@ app.post('/updateAppointment', async (req, res) => {
 
         // Select connection based on add_RegionName
         let connection;
-        if (update_region === 'Central Luzon (III)' || 
-        update_region === 'National Capital Region' || 
-        update_region === 'National Capital Region (NCR)' || 
-        update_region === 'Bicol Region (V)' || 
-        update_region === 'MIMAROPA (IV-B)' || 
-        update_region === 'CALABARZON (IV-A)' || 
-        update_region === 'Ilocos Region (I)' || 
-        update_region === 'Cordillera Administrative Region (CAR)' || 
-        update_region === 'Cagayan Valley (II)') {
+        if (update_region === 'Luzon') {
+            //console.log("update Going to Luzon");
             connection = centralToLuzonConnection;
         } else {
+            //console.log("update Going to Vismin");
             connection = centralToVisMinConnection;
         }
         // Update the appointment data in the database
@@ -320,17 +316,11 @@ app.post('/deleteAppointment', async (req, res) => {
 
     // Select connection based on add_RegionName
     let connection;
-    if (delete_region === 'Central Luzon (III)' || 
-    delete_region === 'National Capital Region' || 
-    delete_region === 'National Capital Region (NCR)' || 
-    delete_region === 'Bicol Region (V)' || 
-    delete_region === 'MIMAROPA (IV-B)' || 
-    delete_region === 'CALABARZON (IV-A)' || 
-    delete_region === 'Ilocos Region (I)' || 
-    delete_region === 'Cordillera Administrative Region (CAR)' || 
-    delete_region === 'Cagayan Valley (II)') {
+    if (delete_region === 'Luzon') {
+        //console.log("delete Going to Luzon");
         connection = centralToLuzonConnection;
     } else {
+        //console.log("delete Going to vismin");
         connection = centralToVisMinConnection;
     }
 
@@ -360,11 +350,13 @@ app.get('/getAppointmentData', (req, res) => {
     const { apptid, region } = req.query;
     
     let connection;
-    if (region === 'Central Luzon (III)' || region === 'National Capital Region' || region === 'National Capital Region (NCR)' || region === 'Bicol Region (V)' || region === 'MIMAROPA (IV-B)' || region === 'CALABARZON (IV-A)' || region === 'Ilocos Region (I)' || region === 'Cordillera Administrative Region (CAR)' || region === 'Cagayan Valley (II)') {
+    if (region === 'Luzon') {
+        //console.log("Get app data Going to Luzon");
         connection = centralToLuzonConnection;
     } else {
+        //onsole.log("Get app data Going to vismin");
         connection = centralToVisMinConnection;
-    }    
+    }  
     // Query to retrieve appointment data based on apptid
     const query = 'SELECT * FROM DenormalizedAppointments WHERE apptid = ?';
     connection.query(query, [apptid], (error, results) => {
@@ -392,7 +384,7 @@ app.get('/getAppointmentData', (req, res) => {
 
 // Endpoint to generate report
 app.get('/generateReport', (req, res) => {
-    const { type } = req.query;
+    const { type,  } = req.query;
     //console.log("In generate report: " + type);
     let sqlQuery = '';
 

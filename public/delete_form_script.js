@@ -67,7 +67,7 @@ function delete_checkApptid() {
 
 function deleteFetchAppointmentData(apptid) {
     // Make a fetch request to retrieve appointment data
-    const regionValue = regionInput.value
+    const regionValue = delete_regionInput.value
     fetch(`/getAppointmentData?apptid=${apptid}&region=${regionValue}`)
         .then(response => response.json())
         .then(data => {
@@ -83,7 +83,7 @@ function deleteFetchAppointmentData(apptid) {
             document.getElementById('delete_EndTime-val').textContent = 'End Time: ' + data.EndTime;
             document.getElementById('delete_app_type-val').textContent = 'Appointment Type: ' + data.app_type;
             document.getElementById('delete_is_Virtual-val').textContent = 'Is Virtual: ' + data.is_Virtual;
-            document.getElementById('update_RegionName-val').textContent = 'Region: ' + data.RegionName;
+            document.getElementById('delete_RegionName-val').textContent = 'Region: ' + data.RegionName;
         })
         .catch(error => {
             console.error('Error fetching appointment data:', error);
