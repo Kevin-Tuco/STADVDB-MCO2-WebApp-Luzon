@@ -1,0 +1,62 @@
+<!-- Left-hand side - List view of appointments -->
+<h3>List view of appointments</h3>
+
+<!-- Filter dropdowns -->
+<div class="mb-3">
+    <label for="filter" class="form-label">Filter By:</label>
+    <select class="form-select" id="filter" name="filter">
+        <option value="pxid">PX ID</option>
+        <option value="clinicid">Clinic ID</option>
+        <option value="doctorid">Doctor ID</option>
+        <option value="apptid">Appointment ID</option>
+    </select>
+</div>
+
+<div id="filter-values" class="mb-3" style="display: none;">
+    <label for="filter-value" class="form-label">Filter Value:</label>
+    <select class="form-select" id="filter-value" name="filter-value">
+        <!-- Options will be dynamically loaded here -->
+    </select>
+</div>
+
+<!-- Container div for table with fixed dimensions and scrollable content -->
+<div id="appointments-list-container" style="overflow: auto; max-height: 700px;">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">PX ID</th>
+                <th scope="col">Clinic ID</th>
+                <th scope="col">Appointment ID</th>
+                <th scope="col">Doctor ID</th>
+                <th scope="col">Application Type</th>
+                <th scope="col">Virtual</th>
+                <th scope="col">Status</th>
+                <th scope="col">RegionName</th>
+                <th scope="col">Province</th>
+                <th scope="col">Queue Date</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each appointments}}
+            <tr>
+                <td>{{pxid}}</td>
+                <td>{{clinicid}}</td>
+                <td>{{apptid}}</td>
+                <td>{{doctorid}}</td>
+                <td>{{app_type}}</td>
+                <td>{{is_Virtual}}</td>
+                <td>{{status}}</td>
+                <td>{{RegionName}}</td>
+                <td>{{Province}}</td>
+                <td>{{QueueDate}}</td>
+                <td>{{StartTime}}</td>
+                <td>{{EndTime}}</td>
+                
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<script src="app_list_view.js"></script>

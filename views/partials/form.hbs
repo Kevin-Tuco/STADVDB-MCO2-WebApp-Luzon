@@ -1,0 +1,253 @@
+                <!-- Right-hand side - Add Appointments -->
+                <!-- Action selection -->
+                <div class="mb-3">
+                    <label class="form-label">Action</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="add" value="add" checked>
+                        <label class="form-check-label" for="add">
+                            Add Appointment
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="update" value="update">
+                        <label class="form-check-label" for="update">
+                            Update Appointment
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="delete" value="delete">
+                        <label class="form-check-label" for="delete">
+                            Delete Appointment
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="action" id="report" value="report">
+                        <label class="form-check-label" for="report">
+                            Reports
+                        </label>
+                    </div>
+                </div>
+
+                <form id="add-appointment-form">
+                    <div class="add-element form-element">
+                        <div class="mb-3">
+                            <label for="add_pxid" class="form-label">PX ID</label>
+                            <input type="text" class="form-control" id="add_pxid" name="add_pxid" style="text-transform:uppercase;">
+                            <div class="add_pxid-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_clinicid" class="form-label">Clinic ID</label>
+                            <input type="text" class="form-control" id="add_clinicid" name="add_clinicid" style="text-transform:uppercase;">
+                            <div class="add_clinicid-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_doctorid" class="form-label">Doctor ID</label>
+                            <input type="text" class="form-control" id="add_doctorid" name="add_doctorid" style="text-transform:uppercase;">
+                            <div class="add_doctorid-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_status" class="form-label">Status</label>
+                            <select class="form-select" id="add_status" name="add_status">
+                                <option value="Complete">Complete</option>
+                                <option value="Queued">Queued</option>
+                                <option value="Cancel">Cancel</option>
+                                <option value="NoShow">No Show</option>
+                                <option value="Serving">Serving</option>
+                                <option value="Skip">Skip</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_QueueDate" class="form-label">Queue Date</label>
+                            <input type="date" class="form-control" id="add_QueueDate" name="add_QueueDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_app_type" class="form-label">Application Type</label>
+                            <select class="form-select" id="add_app_type" name="add_app_type">
+                                <option value="Consultation">Consultation</option>
+                                <option value="Inpatient">Inpatient</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_is_Virtual" class="form-label">Virtual?</label>
+                            <select class="form-select" id="add_is_Virtual" name="add_is_Virtual">
+                                <option value="TRUE">TRUE</option>
+                                <option value="FALSE">FALSE</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add_RegionName" class="form-label">Region Name</label>
+                            <select class="form-select" id="add_RegionName" name="add_RegionName">
+                                <option value="Central Luzon (III)">Central Luzon (III)</option>
+                                <option value="National Capital Region">National Capital Region</option>
+                                <option value="National Capital Region (NCR)">National Capital Region (NCR)</option>
+                                <option value="Bicol Region (V)">Bicol Region (V)</option>
+                                <option value="MIMAROPA (IV-B)">MIMAROPA (IV-B)</option>
+                                <option value="CALABARZON (IV-A)">CALABARZON (IV-A)</option>
+                                <option value="Ilocos Region (I)">Ilocos Region (I)</option>
+                                <option value="Cordillera Administrative Region (CAR)">Cordillera Administrative Region (CAR)</option>
+                                <option value="Cagayan Valley (II)">Cagayan Valley (II)</option>
+                                <option value="Davao Region (XI)">Davao Region (XI)</option>
+                                <option value="Northern Mindanao (X)">Northern Mindanao (X)</option>
+                                <option value="Zamboanga Peninsula (IX)">Zamboanga Peninsula (IX)</option>
+                                <option value="SOCCSKSARGEN (Cotabato Region) (XII)">SOCCSKSARGEN (Cotabato Region) (XII)</option>
+                                <option value="Central Visayas (VII)">Central Visayas (VII)</option>
+                                <option value="Western Visayas (VI)">Western Visayas (VI)</option>
+                                <option value="Eastern Visayas (VIII)">Eastern Visayas (VIII)</option>
+                                <option value="Caraga (XIII)">Caraga (XIII)</option>
+                                <option value="Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)">Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary form-element add-element submit-add">Submit</button>
+                        <div class="add-submit-message submes"></div>
+                    </div>
+                </form>
+                
+                <form id="update-appointment-form">
+                    <!-- Additional form elements for updating appointment -->
+                    <div class="update-element form-element">
+                        <!-- Elements for updating appointment -->
+                        <div class="mb-3">
+                            <label for="update_apptid" class="form-label">Update: Appointment ID</label>
+                            <input type="text" class="form-control" id="update_apptid" name="update_apptid" style="text-transform:uppercase;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_region" class="form-label">Region</label>
+                            <select class="form-select" id="update_region" name="update_region" >
+                                <option value="Luzon">Luzon</option>
+                                <option value="VisMin">Visayas & Mindanao</option>
+                            </select>
+                        </div>
+                        <div class=" mb-3 update_apptid-error"></div>
+                        <div class="mb-3 update-hide">
+                            <div>Appointment Details: </div>
+                            <div id="update_apptid-val"></div>
+                            <div id="update_pxid-val"></div>
+                            <div id="update_clinicid-val"></div>
+                            <div id="update_doctorid-val"></div>
+                            <div id="update_app_type-val"></div>
+                            <div id="update_is_Virtual-val"></div>
+                            <div id="update_status-val"></div>
+                            <div id="update_RegionName-val"></div>
+                            <div id="update_TimeQueued-val"></div>
+                            <div id="update_QueueDate-val"></div>
+                            <div id="update_StartTime-val"></div>
+                            <div id="update_EndTime-val"></div>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_pxid" class="form-label">PX ID</label>
+                            <input type="text" class="form-control" id="update_pxid" name="update_pxid" style="text-transform:uppercase;" readonly>
+                            <div class="update_pxid-error"></div>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_RegionName" class="form-label">Region</label>
+                            <input type="date" class="form-control" id="update_RegionName" name="update_RegionName" readonly>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_clinicid" class="form-label">Clinic ID</label>
+                            <input type="text" class="form-control" id="update_clinicid" name="update_clinicid" style="text-transform:uppercase;" readonly>
+                            <div class="update_clinicid-error"></div>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_doctorid" class="form-label">Doctor ID</label>
+                            <input type="text" class="form-control" id="update_doctorid" name="update_doctorid" style="text-transform:uppercase;" readonly>
+                            <div class="update_doctorid-error"></div>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_status" class="form-label">Status</label>
+                            <select class="form-select" id="update_status" name="update_status">
+                                <option value="Complete">Complete</option>
+                                <option value="Queued">Queued</option>
+                                <option value="Cancel">Cancel</option>
+                                <option value="NoShow">No Show</option>
+                                <option value="Serving">Serving</option>
+                                <option value="Skip">Skip</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_QueueDate" class="form-label">Queue Date</label>
+                            <input type="date" class="form-control" id="update_QueueDate" name="update_QueueDate" readonly>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_StartTime" class="form-label">Start Time</label>
+                            <input type="date" class="form-control" id="update_StartTime" name="update_StartTime">
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_EndTime" class="form-label">End Time</label>
+                            <input type="date" class="form-control" id="update_EndTime" name="update_EndTime">
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_app_type" class="form-label">Application Type</label>
+                            <select class="form-select" id="update_app_type" name="update_app_type">
+                                <option value="Consultation">Consultation</option>
+                                <option value="Inpatient">Inpatient</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 update-hide">
+                            <label for="update_is_Virtual" class="form-label">Virtual?</label>
+                            <select class="form-select" id="update_is_Virtual" name="update_is_Virtual">
+                                <option value="TRUE">TRUE</option>
+                                <option value="FALSE">FALSE</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary form-element update-element submit-update">Submit</button>
+                        <div class="update-submit-message submes update-hide"></div>
+                    </div>
+                </form>
+                
+                <form id="delete-appointment-form">
+                    <!-- Additional form elements for deleting appointment -->
+                    <div class="delete-element form-element" style="display: none;">
+                        <!-- Elements for deleting appointment -->
+                        <div class="mb-3">
+                            <label for="delete_apptid" class="form-label">Delete: Appointment ID</label>
+                            <input type="text" class="form-control" id="delete_apptid" name="delete_apptid" style="text-transform:uppercase;">
+                            <div class="delete_apptid-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="delete_region" class="form-label">Region</label>
+                            <input type="date" class="form-control" id="delete_region" name="delete_region" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary delete-element submit-delete">Submit</button>
+                        <div class="mb-3 delete-hide">
+                            <div class="delete-submit-message submes"></div>
+                            <div>Appointment Details: </div>
+                            <div id="update_apptid-val"></div>
+                            <div id="update_pxid-val"></div>
+                            <div id="update_clinicid-val"></div>
+                            <div id="update_doctorid-val"></div>
+                            <div id="update_app_type-val"></div>
+                            <div id="update_is_Virtual-val"></div>
+                            <div id="update_status-val"></div>
+                            <div id="update_RegionName-val"></div>
+                            <div id="update_TimeQueued-val"></div>
+                            <div id="update_QueueDate-val"></div>
+                            <div id="update_StartTime-val"></div>
+                            <div id="update_EndTime-val"></div>
+                        </div>
+
+                    </div>
+                </form>
+
+                <form id="report-form">
+                    <!-- Additional form elements for deleting appointment -->
+                    <div class="report-element form-element" style="display: none;">
+                        <!-- Elements for deleting appointment -->
+                        <div class="mb-3 report-hide">
+                            <label for="report_type" class="form-label">Type:</label>
+                            <select class="form-select" id="report_type" name="report_type">
+                                <option value="total_app_type">Total App Type</option>
+                                <option value="clinic_performance">Clinic Performance</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary report-element submit-report">Submit</button>
+                        <div class="mb-3 report-hide report-result" style="overflow: auto; max-height: 700px;">
+                            
+                        </div>
+
+                    </div>
+                </form>
+
+                <script src="add_form_script.js"></script>
+                <script src="update_form_script.js"></script>
+                <script src="delete_form_script.js"></script>
+                <script src="report_form_script.js"></script>
