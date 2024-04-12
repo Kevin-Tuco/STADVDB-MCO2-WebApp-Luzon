@@ -1,10 +1,13 @@
+const report_regionInput = document.getElementById('report_region');
+
 // Function to handle form submission
 document.getElementById('report-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
+    const regionValue = report_regionInput.value
     const reportType = document.getElementById('report_type').value;
 
     // Make a fetch request to retrieve report data based on the selected report type
-    fetch(`/generateReport?type=${reportType}`)
+    fetch(`/generateReport?type=${reportType}&region=${regionValue}`)
         .then(response => response.json())
         .then(data => {
             // Process the received report data and display it in the report-hide div

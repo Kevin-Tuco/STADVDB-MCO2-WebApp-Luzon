@@ -31,38 +31,109 @@ function delete_checkApptid() {
     const apptidValue = delete_apptidInput.value.toUpperCase();
     const regionValue = delete_regionInput.value
     let result = 0;
-    if (!apptidValue) return;
-
+    let del_dbAvail;
+    const delerrorDiv = document.querySelector('.delete_apptid-error');
     // Clear the error message if the input is empty
     if (!apptidValue) {
-        const errorDiv = document.querySelector('.delete_apptid-error');
-        errorDiv.textContent = '';
+        //const errorDiv = document.querySelector('.delete_apptid-error');
+        delerrorDiv.textContent = '';
         return;
     }
-
-    // Call an API endpoint to check if pxid exists in the database
-    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
-        .then(response => response.json())
+    fetch('/getDB_Status')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
-            if (!data.exists) {
-                disableSubmitButton();
-                const errorDiv = document.querySelector('.delete_apptid-error');
-                errorDiv.textContent = 'apptid not found';
-                del_hideInputs();
-                result = 1;
-                return result;
-            } else {
-                enableSubmitButton();
-                const errorDiv = document.querySelector('.delete_apptid-error');
-                errorDiv.textContent = '';
-                del_showInputs();
-                result = 2;
-                return result;
+            del_dbAvail = data;
+            console.log(data); // This will log an object containing the states of your databases
+            // You can access the values using dot notation, e.g., data.CentralDB_State
+            //Check if the dbs allows to search
+            if(regionValue === "Luzon"){
+                if(del_dbAvail.CentralDB_State == false && del_dbAvail.LuzonDB_State == false){
+                    delerrorDiv.textContent = 'Luzon Database Not Reachable';
+                    return
+                }
+                else{
+                    // Call an API endpoint to check if apptid exists in the database
+                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.exists) {
+                            disableSubmitButton();
+                            delerrorDiv.textContent = 'apptid not found';
+                            hideInputs();
+                            result = 1;
+                            return result;
+                        } else {
+                            enableSubmitButton();
+                            delerrorDiv.textContent = '';
+                            showInputs();
+                            result = 2;
+                            return result;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking apptid:', error);
+                    });
+                }
+                
+            }else if (regionValue === "VisMin"){
+                if(del_dbAvail.CentralDB_State == false && del_dbAvail.VisMinDB_State == false){
+                    delerrorDiv.textContent = 'VisMin Database Not Reachable';
+                    return
+                }
+                else{
+                    // Call an API endpoint to check if apptid exists in the database
+                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.exists) {
+                            disableSubmitButton();
+                            delerrorDiv.textContent = 'apptid not found';
+                            hideInputs();
+                            result = 1;
+                            return result;
+                        } else {
+                            enableSubmitButton();
+                            delerrorDiv.textContent = '';
+                            showInputs();
+                            result = 2;
+                            return result;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking apptid:', error);
+                    });
+                }
             }
         })
         .catch(error => {
-            console.error('Error checking apptid:', error);
+            console.error('There was a problem with the fetch operation:', error);
         });
+    // // Call an API endpoint to check if pxid exists in the database
+    // fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (!data.exists) {
+    //             disableSubmitButton();
+    //             errorDiv.textContent = 'apptid not found';
+    //             del_hideInputs();
+    //             result = 1;
+    //             return result;
+    //         } else {
+    //             enableSubmitButton();
+    //             errorDiv.textContent = '';
+    //             del_showInputs();
+    //             result = 2;
+    //             return result;
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error checking apptid:', error);
+    //     });
 }
 
 function deleteFetchAppointmentData(apptid) {

@@ -55,6 +55,8 @@ function checkApptid() {
     const apptidValue = apptidInput.value.toUpperCase();
     const regionValue = regionInput.value
     let result = 0;
+    let dbAvail;
+    const errorDiv = document.querySelector('.update_apptid-error');
 
     // Clear the error message if the input is empty
     if (!apptidValue) {
@@ -62,29 +64,79 @@ function checkApptid() {
         errorDiv.textContent = '';
         return;
     }
-
-    // Call an API endpoint to check if apptid exists in the database
-    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
-        .then(response => response.json())
+    fetch('/getDB_Status')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
-            if (!data.exists) {
-                disableSubmitButton();
-                const errorDiv = document.querySelector('.update_apptid-error');
-                errorDiv.textContent = 'apptid not found';
-                hideInputs();
-                result = 1;
-                return result;
-            } else {
-                enableSubmitButton();
-                const errorDiv = document.querySelector('.update_apptid-error');
-                errorDiv.textContent = '';
-                showInputs();
-                result = 2;
-                return result;
+            dbAvail = data;
+            console.log(data); // This will log an object containing the states of your databases
+            // You can access the values using dot notation, e.g., data.CentralDB_State
+            //Check if the dbs allows to search
+            if(regionValue === "Luzon"){
+                if(dbAvail.CentralDB_State == false && dbAvail.LuzonDB_State == false){
+                    errorDiv.textContent = 'Luzon Database Not Reachable';
+                    return
+                }
+                else{
+                    // Call an API endpoint to check if apptid exists in the database
+                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.exists) {
+                            disableSubmitButton();
+                            errorDiv.textContent = 'apptid not found';
+                            hideInputs();
+                            result = 1;
+                            return result;
+                        } else {
+                            enableSubmitButton();
+                            errorDiv.textContent = '';
+                            showInputs();
+                            result = 2;
+                            return result;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking apptid:', error);
+                    });
+                }
+                
+            }else if (regionValue === "VisMin"){
+                if(dbAvail.CentralDB_State == false && dbAvail.VisMinDB_State == false){
+                    errorDiv.textContent = 'VisMin Database Not Reachable';
+                    return
+                }
+                else{
+                    // Call an API endpoint to check if apptid exists in the database
+                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.exists) {
+                            disableSubmitButton();
+                            errorDiv.textContent = 'apptid not found';
+                            hideInputs();
+                            result = 1;
+                            return result;
+                        } else {
+                            enableSubmitButton();
+                            errorDiv.textContent = '';
+                            showInputs();
+                            result = 2;
+                            return result;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking apptid:', error);
+                    });
+                }
             }
         })
         .catch(error => {
-            console.error('Error checking apptid:', error);
+            console.error('There was a problem with the fetch operation:', error);
         });
 }
 
@@ -146,7 +198,7 @@ update_form.addEventListener('submit', function(event) {
     })
     .then(data => {
         // Handle successful form submission
-        console.log('Form submission successful:', data);
+        console.log('Form submission successful:', data.success);
         update_form.reset(); // Clear the form
         update_submitMessage.textContent = 'Appointment updated successfully!';
     })

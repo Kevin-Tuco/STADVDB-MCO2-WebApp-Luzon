@@ -43,7 +43,7 @@ form.addEventListener('submit', function(event) {
     })
     .then(data => {
         // Handle successful form submission
-        console.log('Form submission successful:', data);
+        console.log('Form submission successful:', data.success);
         form.reset(); // Clear the form
         submitMessage.textContent = 'Appointment added successfully!';
     })
