@@ -73,6 +73,7 @@ luzonConnection.connect(err => {
 
 // Route to handle closing connection to Central
 app.get('/dbChange', (req, res) => {
+    console.log("In DB Change");
     const action = req.query.action;
     switch (action) {
         case 'closeConnectionToCentral':
@@ -88,8 +89,8 @@ app.get('/dbChange', (req, res) => {
             RecoveryFunction();
             res.json({ success: true });
             break;
-        case 'openConnectionToVisMin':
-            VisMinDB_State = true;
+        case 'openConnectionToLuzon':
+            LuzonDB_State = true;
             RecoveryFunction();
             res.json({ success: true });
             break;
@@ -346,12 +347,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Define routes
 app.get('/getDB_Status', (req, res) => {
     const dbStatus = {
-        VisMinDB_State: VisMinDB_State,
         CentralDB_State: CentralDB_State,
         LuzonDB_State: LuzonDB_State
     };
     console.log("DB Status: "+dbStatus);
-    console.log("VisMinDB_State: "+dbStatus.VisMinDB_State);
     console.log("CentralDB_State: "+dbStatus.CentralDB_State);
     console.log("LuzonDB_State: "+dbStatus.LuzonDB_State);
     res.json(dbStatus);
@@ -394,7 +393,7 @@ app.get('/getDistinctValues', async (req, res) => {
     let resultsLuzon = [];
     const sql = `SELECT DISTINCT ${filter} FROM DenormalizedAppointments LIMIT 50`;
     if(LuzonDB_State == true || CentralDB_State == true){
-        resultsVisMin = await handleDatabaseOperation(sql, [], "Read", "Luzon");
+        resultsLuzon = await handleDatabaseOperation(sql, [], "Read", "Luzon");
         //console.log("appointmentsFromLuzon: "+appointmentsFromLuzon);
     }
     const valuesLuzon = resultsLuzon.map(result => result[filter]);
@@ -409,7 +408,7 @@ app.get('/filterAppointments', async(req, res) => {
     const sql = `SELECT * FROM DenormalizedAppointments WHERE ${filter} = ? LIMIT 50`;
     let fAresultsLuzon = [];
     if(LuzonDB_State == true || CentralDB_State == true){
-        fAresultsVisMin = await handleDatabaseOperation(sql, [value], "Read", "Luzon");
+        fAresultsLuzon = await handleDatabaseOperation(sql, [value], "Read", "Luzon");
         //console.log("appointmentsFromLuzon: "+appointmentsFromLuzon);
     }
     res.json(fAresultsLuzon);
@@ -417,7 +416,7 @@ app.get('/filterAppointments', async(req, res) => {
 
 // Endpoint to check if apptid exists
 app.get('/checkApptid', async(req, res) => {
-    //console.log("in /checkApptid");
+    console.log("in /checkApptid");
     const apptid = req.query.apptid.toUpperCase(); // Convert to uppercase
     const query = `SELECT COUNT(*) AS count FROM DenormalizedAppointments WHERE apptid = ?`;
 

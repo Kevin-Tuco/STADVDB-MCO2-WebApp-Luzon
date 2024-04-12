@@ -74,7 +74,6 @@ function checkApptid() {
             console.log(data); // This will log an object containing the states of your databases
             // You can access the values using dot notation, e.g., data.CentralDB_State
             //Check if the dbs allows to search
-            if(regionValue === "Luzon"){
                 if(dbAvail.CentralDB_State == false && dbAvail.LuzonDB_State == false){
                     errorDiv.textContent = 'Luzon Database Not Reachable';
                     return
@@ -102,8 +101,6 @@ function checkApptid() {
                         console.error('Error checking apptid:', error);
                     });
                 }
-                
-            }
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

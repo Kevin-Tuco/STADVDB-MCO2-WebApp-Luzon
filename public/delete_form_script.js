@@ -28,7 +28,6 @@ function del_showInputs() {
 //Function to check if the apptid is valid
 function delete_checkApptid() {
     const apptidValue = delete_apptidInput.value.toUpperCase();
-    const regionValue = delete_regionInput.value
     let result = 0;
     let del_dbAvail;
     const delerrorDiv = document.querySelector('.delete_apptid-error');
@@ -50,7 +49,6 @@ function delete_checkApptid() {
             console.log(data); // This will log an object containing the states of your databases
             // You can access the values using dot notation, e.g., data.CentralDB_State
             //Check if the dbs allows to search
-            if(regionValue === "Luzon"){
                 if(del_dbAvail.CentralDB_State == false && del_dbAvail.LuzonDB_State == false){
                     delerrorDiv.textContent = 'Luzon Database Not Reachable';
                     return
@@ -78,8 +76,6 @@ function delete_checkApptid() {
                         console.error('Error checking apptid:', error);
                     });
                 }
-                
-            }
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
