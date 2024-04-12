@@ -27,7 +27,6 @@ hideInputs();
 
 // Select the apptid input field
 const apptidInput = document.getElementById('update_apptid');
-const regionInput = document.getElementById('update_region');
 const update_submitButton = document.querySelector('.submit-update');
 
 // Function to disable the submit button
@@ -53,7 +52,6 @@ apptidInput.addEventListener('input', function() {
 
 function checkApptid() {
     const apptidValue = apptidInput.value.toUpperCase();
-    const regionValue = regionInput.value
     let result = 0;
     let dbAvail;
     const errorDiv = document.querySelector('.update_apptid-error');
@@ -83,7 +81,7 @@ function checkApptid() {
                 }
                 else{
                     // Call an API endpoint to check if apptid exists in the database
-                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    fetch(`/checkApptid?apptid=${apptidValue}`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data.exists) {
@@ -105,34 +103,6 @@ function checkApptid() {
                     });
                 }
                 
-            }else if (regionValue === "VisMin"){
-                if(dbAvail.CentralDB_State == false && dbAvail.VisMinDB_State == false){
-                    errorDiv.textContent = 'VisMin Database Not Reachable';
-                    return
-                }
-                else{
-                    // Call an API endpoint to check if apptid exists in the database
-                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.exists) {
-                            disableSubmitButton();
-                            errorDiv.textContent = 'apptid not found';
-                            hideInputs();
-                            result = 1;
-                            return result;
-                        } else {
-                            enableSubmitButton();
-                            errorDiv.textContent = '';
-                            showInputs();
-                            result = 2;
-                            return result;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking apptid:', error);
-                    });
-                }
             }
         })
         .catch(error => {
@@ -144,8 +114,7 @@ function checkApptid() {
 // Function to fetch appointment data based on apptid
 function fetchAppointmentData(apptid) {
     // Make a fetch request to retrieve appointment data
-    const regionValue = regionInput.value
-    fetch(`/getAppointmentData?apptid=${apptid}&region=${regionValue}`)
+    fetch(`/getAppointmentData?apptid=${apptid}`)
         .then(response => response.json())
         .then(data => {
             // Populate form inputs with fetched data

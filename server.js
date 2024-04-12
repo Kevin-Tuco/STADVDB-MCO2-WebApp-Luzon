@@ -15,15 +15,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 /*------------ Connection Setup-----------*/
-let VisMinDB_State = true;
 let CentralDB_State = true;
 let LuzonDB_State = true;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
-
 
 // Central to Luzon Database Connection
 const centralToLuzonConnection = mysql.createConnection({
@@ -34,14 +31,6 @@ const centralToLuzonConnection = mysql.createConnection({
     database: process.env.CENTRAL_TO_LUZON_DATABASE
 });
 
-// Central to VisMin Database Connection
-const centralToVisMinConnection = mysql.createConnection({
-    host: process.env.CENTRAL_TO_VISMIN_HOST,
-    port: process.env.CENTRAL_TO_VISMIN_PORT,
-    user: process.env.CENTRAL_TO_VISMIN_USER,
-    password: process.env.CENTRAL_TO_VISMIN_PASSWORD,
-    database: process.env.CENTRAL_TO_VISMIN_DATABASE
-});
 
 // Luzon Database Connection
 const luzonConnection = mysql.createConnection({
@@ -52,19 +41,11 @@ const luzonConnection = mysql.createConnection({
     database: process.env.LUZON_DATABASE
 });
 
-// VisMin Database Connection
-const visMinConnection = mysql.createConnection({
-    host: process.env.VISMIN_HOST,
-    port: process.env.VISMIN_PORT,
-    user: process.env.VISMIN_USER,
-    password: process.env.VISMIN_PASSWORD,
-    database: process.env.VISMIN_DATABASE
-});
 
-let CentralVM = centralToVisMinConnection;
+
 let CentralL = centralToLuzonConnection;
 let Luzon = luzonConnection;
-let VisMin = visMinConnection;
+
 
 
 /*------------ Connection Initialize-----------*/
@@ -77,15 +58,6 @@ centralToLuzonConnection.connect(err => {
     console.log('Connected to Central-Luzon database');
 });
 
-// Connect to Central Database
-centralToVisMinConnection.connect(err => {
-    if (err) {
-        console.error('Error connecting to Central-VisMin database:', err);
-        return;
-    }
-    console.log('Connected to Central database');
-});
-
 // Connect to Luzon Recovery Database
 luzonConnection.connect(err => {
     if (err) {
@@ -95,14 +67,7 @@ luzonConnection.connect(err => {
     console.log('Connected to Luzon Recovery database');
 });
 
-// Connect to VisMin Recovery Database
-visMinConnection.connect(err => {
-    if (err) {
-        console.error('Error connecting to VisMin database:', err);
-        return;
-    }
-    console.log('Connected to VisMin Recovery database');
-});
+
 
 /*-----------Connection Function--------*/
 
@@ -112,10 +77,6 @@ app.get('/dbChange', (req, res) => {
     switch (action) {
         case 'closeConnectionToCentral':
             CentralDB_State = false;
-            res.json({ success: true });
-            break;
-        case 'closeConnectionToVisMin':
-            VisMinDB_State = false;
             res.json({ success: true });
             break;
         case 'closeConnectionToLuzon':
@@ -129,11 +90,6 @@ app.get('/dbChange', (req, res) => {
             break;
         case 'openConnectionToVisMin':
             VisMinDB_State = true;
-            RecoveryFunction();
-            res.json({ success: true });
-            break;
-        case 'openConnectionToLuzon':
-            LuzonDB_State = true;
             RecoveryFunction();
             res.json({ success: true });
             break;
@@ -247,34 +203,6 @@ async function RecoveryFunction() {
                                 });
                             });
                             break;
-                        case 'CentralVisMin':
-                            console.log("In Recovery: Writing to Central-VisMin");
-                            const resultsRecoveryWriteCentralVisMin = await new Promise((resolve, reject) => {
-                            centralToVisMinConnection.query(log.sql, log.values, (err, resultsRecoveryWriteCentralVisMin) => {
-                                if (err) {
-                                    console.error('Central-VisMin DB -> Error executing SQL query:', err);
-                                    reject(err);
-                                    return;
-                                }
-                                console.log("Recovery: Central-VisMin -> Write Success");
-                                resolve(resultsRecoveryWriteCentralVisMin);
-                            });
-                            });
-                            break;
-                        case 'VisMin':
-                            console.log("In Recovery: Writing to VisMin");
-                            const resultsRecoveryWriteVisMin = await new Promise((resolve, reject) => {
-                                visMinConnection.query(sql, values, (err, resultsRecoveryWriteVisMin) => {
-                                    if (err) {
-                                        console.error('VisMin DB -> Error executing SQL query:', err);
-                                        reject(err);
-                                        return;
-                                    }
-                                    console.log("Recovery: VisMin -> Write Success");
-                                    resolve(resultsRecoveryWriteVisMin);
-                                });
-                            });
-                            break;
                     }
                 }catch (error){
                     console.error('Error in recovery:', error);
@@ -297,24 +225,12 @@ async function RecoveryFunction() {
     });
 }
 
-// Call the RecoveryFunction to execute it
-//RecoveryFunction();
-
-
-
-
-// Example usage:
-//writeToLogFile("SELECT * FROM table", [1, 2, 3], "Central");
-//writeToLogFile("SELECT * FROM table", [1, 2, 3], "Luzon");
-//RecoveryFunction();
-
 
 // Define a function to handle database operations
 async function handleDatabaseOperation(sql, values, action, db) {
     console.log("\nIn Handle Database Operations");
     if (action == "Write") {
         console.log("In Write");
-        if (db == "Luzon") {
             console.log("In Write-Luzon");
             try {
                 if (CentralDB_State) {
@@ -371,68 +287,9 @@ async function handleDatabaseOperation(sql, values, action, db) {
                 response.status(500).json({ error: 'Internal server error' });
                 return;
             }
-        } else if (db == "VisMin") {
-            console.log("In Write-VisMin");
-            try {
-                if (CentralDB_State) {
-                    console.log("In Write-VisMin: Writing to Central");
-                    const resultsWriteCentralVisMin = await new Promise((resolve, reject) => {
-                        centralToVisMinConnection.query(sql, values, async (err, resultsWriteCentralVisMin) => {
-                            if (err) {
-                                console.error('Central-VisMin DB -> Error executing SQL query:', err);
-                                console.log("Central-VisMin DB -> Transaction Logged");
-                                await writeToLogFile(sql, values, "CentralVisMin");
-                                await sleep(500);
-                                reject(err);
-                                return;
-                            }
-                            resolve(resultsWriteCentralVisMin);
-                        });
-                    });
-                    if (resultsWriteCentralVisMin.exists) {
-                        console.log("Central-VisMin DB -> Transaction Success");
-                    }
-                } else {
-                    await writeToLogFile(sql, values, "CentralVisMin");
-                    await sleep(500);
-                    console.log("Central-VisMin DB -> Transaction Logged");
-                }
-
-                if (VisMinDB_State) {
-                    console.log("In Write-VisMin: Writing to VisMin");
-                    const resultsWriteVisMin = await new Promise((resolve, reject) => {
-                        visMinConnection.query(sql, values, async (err, resultsWriteVisMin) => {
-                            if (err) {
-                                console.error('VisMin DB -> Error executing SQL query:', err);
-                                console.log("VisMin DB -> Transaction Logged");
-                                await writeToLogFile(sql, values, "VisMin");
-                                await sleep(500);
-                                reject(err);
-                                return;
-                            }
-                            resolve(resultsWriteVisMin);
-                        });
-                    });
-                    if (resultsWriteVisMin.exists) {
-                        console.log("VisMin DB -> Transaction Success");
-                    }
-                } else {
-                    await writeToLogFile(sql, values, "VisMin");
-                    await sleep(500);
-                    console.log("VisMin DB -> Transaction Logged");
-                }
-
-                return "Success";
-            } catch (error) {
-                console.error('Error during write operation:', error);
-                response.status(500).json({ error: 'Internal server error' });
-                return;
-            }
-        }
     }
     if (action == "Read") {
         console.log("In Read");
-        if (db == "Luzon") {
             console.log("In Read-Luzon");
             if (CentralDB_State == true) {
                 console.log("In Read-Luzon - Central");
@@ -462,39 +319,6 @@ async function handleDatabaseOperation(sql, values, action, db) {
                     });
                 });
                 return resultsReadLuzon;
-            }
-        }
-        if (db == "VisMin") {
-            console.log("In Read-VisMin");
-            if (CentralDB_State == true) {
-                console.log("In Read-VisMin - Central");
-                const resultsReadCentralVisMin = await new Promise((resolve, reject) => {
-                    centralToVisMinConnection.query(sql, values, (err, resultsReadCentralVisMin) => {
-                        if (err) {
-                            console.error('Read Central-VisMin DB -> Error executing SQL query:', err);
-                            reject(err);
-                            return;
-                        }
-                        console.log("Central-VisMin DB -> Read Success")
-                        resolve(resultsReadCentralVisMin);
-                    });
-                });
-                return resultsReadCentralVisMin;
-            } else if (VisMinDB_State == true) {
-                console.log("In Read-VisMin - VisMin");
-                const resultsReadVisMin = await new Promise((resolve, reject) => {
-                    visMinConnection.query(sql, values, (err, resultsReadVisMin) => {
-                        if (err) {
-                            console.error('Read VisMin DB -> Error executing SQL query:', err);
-                            reject(err);
-                            return;
-                        }
-                        console.log("VisMin DB -> Read Success")
-                        resolve(resultsReadVisMin);
-                    });
-                });
-                return resultsReadVisMin;
-            }
         }
     }
 }
@@ -539,17 +363,12 @@ app.get('/', async (req, res) => {
     // Query first 50 appointments from Luzon database
     query = 'SELECT * FROM DenormalizedAppointments LIMIT 50';
 
-    if(VisMinDB_State == true || CentralDB_State == true){
-        appointmentsFromVisMin = await handleDatabaseOperation(query, [], "Read", "VisMin");
-        //console.log("appointmentsFromVisMin: "+appointmentsFromVisMin);
-    }
     if(LuzonDB_State == true || CentralDB_State == true){
         appointmentsFromLuzon = await handleDatabaseOperation(query, [], "Read", "Luzon");
         //console.log("appointmentsFromLuzon: "+appointmentsFromLuzon);
     }
     
-    const combinedAppointments = [...appointmentsFromLuzon, ...appointmentsFromVisMin];
-    res.render('main', { appointments: combinedAppointments });
+    res.render('main', { appointments: appointmentsFromLuzon });
 });
 
 
@@ -573,20 +392,13 @@ app.get('/getDistinctValues', async (req, res) => {
     //console.log("Filter: " +filter);
 
     let resultsLuzon = [];
-    let resultsVisMin = [];
     const sql = `SELECT DISTINCT ${filter} FROM DenormalizedAppointments LIMIT 50`;
-    if(VisMinDB_State == true || CentralDB_State == true){
-        resultsLuzon = await handleDatabaseOperation(sql, [], "Read", "VisMin");
-        //console.log("appointmentsFromVisMin: "+appointmentsFromVisMin);
-    }
     if(LuzonDB_State == true || CentralDB_State == true){
         resultsVisMin = await handleDatabaseOperation(sql, [], "Read", "Luzon");
         //console.log("appointmentsFromLuzon: "+appointmentsFromLuzon);
     }
     const valuesLuzon = resultsLuzon.map(result => result[filter]);
-    const valuesVisMin = resultsVisMin.map(result => result[filter]);
-    const combinedValues = [...valuesLuzon, ...valuesVisMin];
-    res.json(combinedValues);
+    res.json(resultsLuzon);
 });
 
 // Route to filter appointments
@@ -596,34 +408,22 @@ app.get('/filterAppointments', async(req, res) => {
     const value = req.query.value;
     const sql = `SELECT * FROM DenormalizedAppointments WHERE ${filter} = ? LIMIT 50`;
     let fAresultsLuzon = [];
-    let fAresultsVisMin = [];
-    if(VisMinDB_State == true || CentralDB_State == true){
-        fAresultsLuzon = await handleDatabaseOperation(sql, [value], "Read", "VisMin");
-        //console.log("appointmentsFromVisMin: "+appointmentsFromVisMin);
-    }
     if(LuzonDB_State == true || CentralDB_State == true){
         fAresultsVisMin = await handleDatabaseOperation(sql, [value], "Read", "Luzon");
         //console.log("appointmentsFromLuzon: "+appointmentsFromLuzon);
     }
-    const appointments = [...fAresultsLuzon, ...fAresultsVisMin];
-    res.json(appointments);
+    res.json(fAresultsLuzon);
 });
 
 // Endpoint to check if apptid exists
 app.get('/checkApptid', async(req, res) => {
     //console.log("in /checkApptid");
     const apptid = req.query.apptid.toUpperCase(); // Convert to uppercase
-    const region = req.query.region
     const query = `SELECT COUNT(*) AS count FROM DenormalizedAppointments WHERE apptid = ?`;
 
     let chekAppIdResults = [];
-    if (region === 'Luzon') {
         console.log("Check App Id Luzon");
         chekAppIdResults = await handleDatabaseOperation(query, [apptid], "Read", "Luzon");
-    } else {
-        console.log("Check App Id VisMin");
-        chekAppIdResults = await handleDatabaseOperation(query, [apptid], "Read", "VisMin");
-    }
     const apptidExists = chekAppIdResults[0].count > 0;
     res.json({ exists: apptidExists });
 });
@@ -640,14 +440,10 @@ app.post('/addAppointment', async (req, res) => {
         
         
         // Select connection based on add_RegionName
-        if (add_RegionName === 'Central Luzon (III)' || add_RegionName === 'National Capital Region' || add_RegionName === 'National Capital Region (NCR)' || add_RegionName === 'Bicol Region (V)' || add_RegionName === 'MIMAROPA (IV-B)' || add_RegionName === 'CALABARZON (IV-A)' || add_RegionName === 'Ilocos Region (I)' || add_RegionName === 'Cordillera Administrative Region (CAR)' || add_RegionName === 'Cagayan Valley (II)') {
             //console.log("add Going to Luzon");
             console.log("Add Luzon");
             addAppResults = await handleDatabaseOperation(query, values, "Write", "Luzon");
-        } else {
-            console.log("Add VisMin");
-            addAppResults = await handleDatabaseOperation(query, values, "Write", "VisMin");
-        }
+
         console.log("Add Result: " + addAppResults);
         res.json({success: addAppResults});
     } catch (error) {
@@ -659,7 +455,7 @@ app.post('/addAppointment', async (req, res) => {
 
 // Endpoint to add appointment data to the database
 app.post('/updateAppointment', async (req, res) => {
-    const { update_apptid, update_status, update_StartTime, update_EndTime, update_app_type, update_is_Virtual, update_region} = req.body;
+    const { update_apptid, update_status, update_StartTime, update_EndTime, update_app_type, update_is_Virtual} = req.body;
     let updAppResults;
     try {
         // Check if update_EndTime or update_StartTime are empty, use NULL instead
@@ -667,11 +463,8 @@ app.post('/updateAppointment', async (req, res) => {
         console.log('Values before adding: ' + values);
         const query = 'UPDATE DenormalizedAppointments SET status = ?, StartTime = ?, EndTime = ?, app_type = ?, is_Virtual = ? WHERE apptid = ?';
         // Select connection based on add_RegionName
-        if (update_region === 'Luzon') {
-            updAppResults = await handleDatabaseOperation(query, values, "Write", "Luzon");
-        } else {
-            updAppResults = await handleDatabaseOperation(query, values, "Write", "VisMin");
-        }
+        updAppResults = await handleDatabaseOperation(query, values, "Write", "Luzon");
+        
         console.log("Update Result: " + updAppResults);
         res.json({success: updAppResults});
     } catch (error) {
@@ -682,41 +475,14 @@ app.post('/updateAppointment', async (req, res) => {
 
 // Endpoint to add appointment data to the database
 app.post('/deleteAppointment', async (req, res) => {
-    const { delete_apptid, delete_region } = req.body;
+    const { delete_apptid } = req.body;
     const query = 'DELETE FROM DenormalizedAppointments WHERE apptid = ?';
     values = delete_apptid;
     let delAppResults
-    // Select connection based on add_RegionName
-    // let connection;
-    // if (delete_region === 'Luzon') {
-    //     //console.log("delete Going to Luzon");
-    //     connection = centralToLuzonConnection;
-    //     connection = luzonConnection; //bev
-    // } else {
-    //     //console.log("delete Going to vismin");
-    //     connection = centralToVisMinConnection;
-    //     connection = visMinConnection; //bev
-    // }
-
     try {
-        if (delete_region === 'Luzon') {
             delAppResults = await handleDatabaseOperation(query, values, "Write", "Luzon");
-        } else {
-            delAppResults = await handleDatabaseOperation(query, values, "Write", "VisMin");
-        }
         console.log("Delete Result: " + delAppResults);
         res.json({success: delAppResults});
-        // Update the appointment data in the database
-        // connection.query(query, values, (error, results) => {
-        //     if (error) {
-        //         console.error('Error updating appointment:', error);
-        //         res.status(500).json({ error: 'Internal server error' });
-        //         return;
-        //     }
-
-        //     // Respond with success message or updated ID
-        //     res.json({ success: true});
-        // });
     } catch (error) {
         console.error('Error updating appointment:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -726,15 +492,11 @@ app.post('/deleteAppointment', async (req, res) => {
 // Endpoint to retrieve appointment data based on apptid
 app.get('/getAppointmentData', async (req, res) => {
     //console.log("in /getAppointmentData");
-    const { apptid, region } = req.query;
+    const { apptid } = req.query;
     const query = 'SELECT * FROM DenormalizedAppointments WHERE apptid = ?';
     let values = apptid
     try{
-        if (region === 'Luzon') {
-                getAppResults = await handleDatabaseOperation(query, values, "Read", "Luzon");
-            } else {
-                getAppResults = await handleDatabaseOperation(query, values, "Read", "VisMin");
-            }  
+        getAppResults = await handleDatabaseOperation(query, values, "Read", "Luzon");
         if (getAppResults.length > 0) {
             const appointmentData = getAppResults[0];
             //console.log("appointmentData: ", appointmentData);
@@ -765,14 +527,9 @@ app.get('/generateReport', async (req, res) => {
             return res.status(400).json({ error: 'Invalid report type' });
         }
 
-        let connection;
-        if (region === 'Luzon') {
             console.log("report Going to Luzon");
             repAppResults = await handleDatabaseOperation(sqlQuery, [], "Read", "Luzon");
-        } else {
-            console.log("report Going to Vismin");
-            repAppResults = await handleDatabaseOperation(sqlQuery, [], "Read", "VisMin");
-        }
+        
         res.json(repAppResults);
     }catch (error) {
         console.error('Error generating report:', error);

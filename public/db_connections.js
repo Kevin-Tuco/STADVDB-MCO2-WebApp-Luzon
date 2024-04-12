@@ -1,9 +1,7 @@
 const closeCentralBtn = document.getElementById('close-Central-Btn');
-const closeVisMinBtn = document.getElementById('close-VisMin-Btn');
 const closeLuzonBtn = document.getElementById('close-Luzon-Btn');
 
 const openCentralBtn = document.getElementById('open-Central-Btn');
-const openVisMinBtn = document.getElementById('open-VisMin-Btn');
 const openLuzonBtn = document.getElementById('open-Luzon-Btn');
 
 const mainBody = document.querySelector('.main-body');
@@ -33,11 +31,6 @@ conBtns.forEach(button => {
                 closeCentralBtn.style.display = '';
                 openConnectionToCentral();
                 break;
-            case 'open-vismin':
-                openVisMinBtn.style.display = 'none';
-                closeVisMinBtn.style.display = '';
-                openConnectionToVisMin();
-                break;
             case 'open-luzon':
                 openLuzonBtn.style.display = 'none';
                 closeLuzonBtn.style.display = '';
@@ -47,11 +40,6 @@ conBtns.forEach(button => {
                 openCentralBtn.style.display = '';
                 closeCentralBtn.style.display = 'none';
                 closeConnectionToCentral();
-                break;
-            case 'close-vismin':
-                openVisMinBtn.style.display = '';
-                closeVisMinBtn.style.display = 'none';
-                closeConnectionToVisMin();
                 break;
             case 'close-luzon':
                 openLuzonBtn.style.display = '';
@@ -79,11 +67,6 @@ function closeConnectionToCentral() {
     sendRequest('closeConnectionToCentral');
 }
 
-function closeConnectionToVisMin() {
-    // Perform actions to close connection to VisMin
-    sendRequest('closeConnectionToVisMin');
-}
-
 function closeConnectionToLuzon() {
     // Perform actions to close connection to Luzon
     sendRequest('closeConnectionToLuzon');
@@ -92,11 +75,6 @@ function closeConnectionToLuzon() {
 function openConnectionToCentral() {
     // Perform actions to open connection to Central
     sendRequest('openConnectionToCentral');
-}
-
-function openConnectionToVisMin() {
-    // Perform actions to open connection to VisMin
-    sendRequest('openConnectionToVisMin');
 }
 
 function openConnectionToLuzon() {

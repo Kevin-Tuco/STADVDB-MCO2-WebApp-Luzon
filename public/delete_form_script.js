@@ -1,5 +1,4 @@
 const delete_apptidInput = document.getElementById('delete_apptid');
-const delete_regionInput = document.getElementById('delete_region');
 // Add event listener to apptid input
 delete_apptidInput.addEventListener('input', function() {
     // Call fetchAppointmentData with the input value
@@ -58,7 +57,7 @@ function delete_checkApptid() {
                 }
                 else{
                     // Call an API endpoint to check if apptid exists in the database
-                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
+                    fetch(`/checkApptid?apptid=${apptidValue}`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data.exists) {
@@ -80,66 +79,15 @@ function delete_checkApptid() {
                     });
                 }
                 
-            }else if (regionValue === "VisMin"){
-                if(del_dbAvail.CentralDB_State == false && del_dbAvail.VisMinDB_State == false){
-                    delerrorDiv.textContent = 'VisMin Database Not Reachable';
-                    return
-                }
-                else{
-                    // Call an API endpoint to check if apptid exists in the database
-                    fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.exists) {
-                            disableSubmitButton();
-                            delerrorDiv.textContent = 'apptid not found';
-                            hideInputs();
-                            result = 1;
-                            return result;
-                        } else {
-                            enableSubmitButton();
-                            delerrorDiv.textContent = '';
-                            showInputs();
-                            result = 2;
-                            return result;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking apptid:', error);
-                    });
-                }
             }
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
-    // // Call an API endpoint to check if pxid exists in the database
-    // fetch(`/checkApptid?apptid=${apptidValue}&region=${regionValue}`)
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (!data.exists) {
-    //             disableSubmitButton();
-    //             errorDiv.textContent = 'apptid not found';
-    //             del_hideInputs();
-    //             result = 1;
-    //             return result;
-    //         } else {
-    //             enableSubmitButton();
-    //             errorDiv.textContent = '';
-    //             del_showInputs();
-    //             result = 2;
-    //             return result;
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error checking apptid:', error);
-    //     });
 }
 
 function deleteFetchAppointmentData(apptid) {
-    // Make a fetch request to retrieve appointment data
-    const regionValue = delete_regionInput.value
-    fetch(`/getAppointmentData?apptid=${apptid}&region=${regionValue}`)
+    fetch(`/getAppointmentData?apptid=${apptid}`)
         .then(response => response.json())
         .then(data => {
             // Populate form inputs with fetched data

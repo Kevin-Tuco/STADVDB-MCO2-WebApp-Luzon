@@ -86,15 +86,6 @@
                                 <option value="Ilocos Region (I)">Ilocos Region (I)</option>
                                 <option value="Cordillera Administrative Region (CAR)">Cordillera Administrative Region (CAR)</option>
                                 <option value="Cagayan Valley (II)">Cagayan Valley (II)</option>
-                                <option value="Davao Region (XI)">Davao Region (XI)</option>
-                                <option value="Northern Mindanao (X)">Northern Mindanao (X)</option>
-                                <option value="Zamboanga Peninsula (IX)">Zamboanga Peninsula (IX)</option>
-                                <option value="SOCCSKSARGEN (Cotabato Region) (XII)">SOCCSKSARGEN (Cotabato Region) (XII)</option>
-                                <option value="Central Visayas (VII)">Central Visayas (VII)</option>
-                                <option value="Western Visayas (VI)">Western Visayas (VI)</option>
-                                <option value="Eastern Visayas (VIII)">Eastern Visayas (VIII)</option>
-                                <option value="Caraga (XIII)">Caraga (XIII)</option>
-                                <option value="Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)">Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary form-element add-element submit-add">Submit</button>
@@ -109,13 +100,6 @@
                         <div class="mb-3">
                             <label for="update_apptid" class="form-label">Update: Appointment ID</label>
                             <input type="text" class="form-control" id="update_apptid" name="update_apptid" style="text-transform:uppercase;">
-                        </div>
-                        <div class="mb-3">
-                            <label for="update_region" class="form-label">Region</label>
-                            <select class="form-select" id="update_region" name="update_region" >
-                                <option value="Luzon">Luzon</option>
-                                <option value="VisMin">Visayas & Mindanao</option>
-                            </select>
                         </div>
                         <div class=" mb-3 update_apptid-error"></div>
                         <div class="mb-3 update-hide">
@@ -203,13 +187,6 @@
                             <input type="text" class="form-control" id="delete_apptid" name="delete_apptid" style="text-transform:uppercase;">
                             <div class="delete_apptid-error"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="delete_region" class="form-label">Region</label>
-                            <select class="form-select" id="delete_region" name="delete_region" >
-                                <option value="Luzon">Luzon</option>
-                                <option value="VisMin">Visayas & Mindanao</option>
-                            </select>
-                        </div>
                         <button type="submit" class="btn btn-primary delete-element submit-delete">Submit</button>
                         <div class="mb-3 delete-hide">
                             <div class="delete-submit-message submes"></div>
@@ -240,13 +217,6 @@
                             <select class="form-select" id="report_type" name="report_type">
                                 <option value="total_app_type">Total App Type</option>
                                 <option value="clinic_performance">Clinic Performance</option>
-                            </select>
-                        </div>
-                        <div class="mb-3 report-hide">
-                            <label for="report_region" class="form-label">Region</label>
-                            <select class="form-select" id="report_region" name="report_region" >
-                                <option value="Luzon">Luzon</option>
-                                <option value="VisMin">Visayas & Mindanao</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary report-element submit-report">Submit</button>
