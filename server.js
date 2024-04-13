@@ -284,8 +284,8 @@ async function handleDatabaseOperation(sql, values, action, db) {
 
                 return "Success";
             } catch (error) {
-                console.error('Error during write operation:', error);
-                response.status(500).json({ error: 'Internal server error' });
+                console.console.log();('Error during write operation:', error);
+                //response.status(500).json({ error: 'Internal server error' });
                 return;
             }
     }
